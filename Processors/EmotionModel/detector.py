@@ -1,9 +1,9 @@
 import base_keys
 from base_component import BaseComponent
 from Processors.Yolov8.video_detection import VideoDetection as video_detector
+from Processors.EmotionModel.EmotionDetector import *
 
-
-class NewModelDetector(BaseComponent):
+class FaceEmotionDetector(BaseComponent):
     """
     Sends 4 different key-value data pairs to the next component:
     1. last_detection
@@ -17,15 +17,14 @@ class NewModelDetector(BaseComponent):
     def __init__(self, name):
         super().__init__(name)
 
-        self.detector = video_detector()
+        self.detector = EmotionDetectionPipeline()
 
     def run(self, raw_data):
         super().set_component_status(base_keys.COMPONENT_IS_RUNNING_STATUS)
 
         frame = raw_data[base_keys.CAMERA_FRAME]
-        yolo_frame = self.detector.run(frame)
+        yolo_frame = self.detector.detect_and_analyze(frame)
 
-        super().send_to_component(last_detection=self.detector.get_last_detection(),
-                                  yolo_frame=yolo_frame,
-                                  class_labels=self.detector.get_class_labels(),
+        super().send_to_component(emotion_frame=yolo_frame,
+                                  emotion_label=self.detector.get_emotion(),
                                   base_data=raw_data)

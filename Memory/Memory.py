@@ -5,7 +5,7 @@ _logger = logging_utility.setup_logger(__name__)
 
 # memory config
 _SHARED_MEMORY_NAME = 'TOM_SHARED_MEMORY'
-_SHARED_MEMORY_SIZE_IN_BYTES = int(10 * 1024 * 1024)  # 10 Mb
+_SHARED_MEMORY_SIZE_IN_BYTES = int(100 * 1024 * 1024)  # 10 Mb
 
 _UNSAVED_VALUES = ["origin", "timestamp"]
 

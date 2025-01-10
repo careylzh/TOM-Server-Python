@@ -18,6 +18,7 @@ CAMERA_WIDGET = "input:camera"
 KEYBOARD_WIDGET = "input:keyboard"
 
 YOLOV8_PROCESSOR = "processing:yolov8"
+EMOTION_PROCESSOR = "processing:deepface"
 AUDIO_CONTEXT_PROCESSOR = "processing:audioContext"
 WHISPER_PROCESSOR = "processing:whisper"
 
@@ -88,6 +89,9 @@ YOLOV8_FRAME = "yolo_frame"
 ##############################################################################################################
 # keys identify values defined at environment variables
 ##############################################################################################################
+
+EMOTION_FRAME = 'emotion_frame'
+EMOTION_LABEL = 'emotion_label'
 
 # NOTE: Environment Keys
 DIRECTIONS_OPTION = "DIRECTIONS_OPTION"
