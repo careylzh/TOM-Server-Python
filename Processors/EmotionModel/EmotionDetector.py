@@ -19,6 +19,7 @@ class EmotionDetectionPipeline:
             'surprise': (0, 255, 255),# Cyan
             'neutral': (128, 128, 128)# Gray
         }
+        self.emotion = None
 
     def detect_and_analyze(self, frame):
         # Run YOLOv8 detection
@@ -50,7 +51,7 @@ class EmotionDetectionPipeline:
                     if emotion_result:
                         # Get dominant emotion
                         emotion = emotion_result[0]['dominant_emotion']
-                        
+                        self.emotion = emotion
                         # Draw bounding box with emotion color
                         color = self.emotion_colors.get(emotion, (255, 255, 255))
                         cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), color, 2)
@@ -71,6 +72,10 @@ class EmotionDetectionPipeline:
                     continue
         
         return annotated_frame
+    
+
+    def get_emotion(self):
+        return self.emotion
 
     def process_video_stream(self, source=0):
         """Process video stream from camera or video file"""

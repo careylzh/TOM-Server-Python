@@ -42,7 +42,7 @@ class TemplateService(BaseComponent):
 
             self._handle_websocket_data(datatype, data)
 
-        if origin == base_keys.YOLOV8_PROCESSOR:
+        if origin == base_keys.EMOTION_PROCESSOR:
             self._handle_camera_data(raw_data)
 
     def _handle_websocket_data(self, socket_data_type, decoded_data):
@@ -54,6 +54,7 @@ class TemplateService(BaseComponent):
                      decoded_data=request_data, detail=request_data.detail)
         try:
             label, image = self._get_detected_label_and_image()
+            print("payload to be sent over websockets:", label)
             self._send_websocket_template_data(text=label, image=image, audio_path="two_beep_audio")
         except Exception:
             # No object is detected
@@ -81,20 +82,19 @@ class TemplateService(BaseComponent):
         super().set_memory_data(base_keys.CAMERA_FRAME, raw_data[base_keys.CAMERA_FRAME])
         super().set_memory_data(base_keys.CAMERA_FRAME_WIDTH, raw_data[base_keys.CAMERA_FRAME_WIDTH])
         super().set_memory_data(base_keys.CAMERA_FRAME_HEIGHT, raw_data[base_keys.CAMERA_FRAME_HEIGHT])
-        super().set_memory_data(base_keys.YOLOV8_LAST_DETECTION, raw_data[base_keys.YOLOV8_LAST_DETECTION])
-        super().set_memory_data(base_keys.YOLOV8_CLASS_LABELS, raw_data[base_keys.YOLOV8_CLASS_LABELS])
+        super().set_memory_data(base_keys.EMOTION_FRAME, raw_data[base_keys.EMOTION_FRAME])
+        super().set_memory_data(base_keys.EMOTION_LABEL, raw_data[base_keys.EMOTION_LABEL])
 
     # Get frame data from memory and get the detected label and image
     def _get_detected_label_and_image(self) -> tuple:
-        frame_detections: dict = super().get_memory_data(base_keys.YOLOV8_LAST_DETECTION)
-        frame: numpy.ndarray = super().get_memory_data(base_keys.CAMERA_FRAME)
+        emotion_frame: numpy.ndarray = super().get_memory_data(base_keys.EMOTION_FRAME)
         frame_width: int = super().get_memory_data(base_keys.CAMERA_FRAME_WIDTH)
         frame_height: int = super().get_memory_data(base_keys.CAMERA_FRAME_HEIGHT)
-        class_labels: dict = super().get_memory_data(base_keys.YOLOV8_CLASS_LABELS)
+        emotion_label: dict = super().get_memory_data(base_keys.EMOTION_LABEL)
 
-        label, image = self._get_first_yolov8_detection(frame_detections, frame, frame_width, frame_height,
-                                                        class_labels)
-        return label, image
+        # label, image = self._get_first_yolov8_detection(frame_detections, frame, frame_width, frame_height,
+        #                                                 class_labels)
+        return emotion_label, image_utility.get_png_image_bytes(emotion_frame)
 
     # Get the first detected label and image from the frame detections
     def _get_first_yolov8_detection(self, frame_detections: dict, frame: numpy.ndarray, frame_width: int,
@@ -116,5 +116,6 @@ class TemplateService(BaseComponent):
                                                                      math.floor(xy_bounds[2]),
                                                                      math.floor(xy_bounds[3]))
         image: bytes = image_utility.get_png_image_bytes(image_frame)
+
 
         return label, image

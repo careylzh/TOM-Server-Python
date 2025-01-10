@@ -28,6 +28,14 @@ class VideoOutput(BaseComponent):
     def play(self, raw_data):
         origin = raw_data[base_keys.ORIGIN_KEY]
 
+        if origin == base_keys.EMOTION_PROCESSOR:
+            frame = raw_data[base_keys.EMOTION_FRAME]
+            camera_frame_width = raw_data[base_keys.CAMERA_FRAME_WIDTH]
+            camera_frame_height = raw_data[base_keys.CAMERA_FRAME_HEIGHT]
+            camera_fps = raw_data[base_keys.CAMERA_FPS]
+
+            self._handle_video_data(frame, camera_frame_width, camera_frame_height, camera_fps)
+
         if origin == base_keys.YOLOV8_PROCESSOR:
             frame = raw_data[base_keys.YOLOV8_FRAME]
             camera_frame_width = raw_data[base_keys.CAMERA_FRAME_WIDTH]
